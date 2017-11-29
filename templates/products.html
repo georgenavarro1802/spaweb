@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en-US"><![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en-US"><![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en-US"><![endif]-->
+<!--[if (gte IE 9)|!(IE)]><html lang="en-US"><![endif]-->
+<head>
+    <title>{{ title }}</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="WEB SPA Enliven Ecuador" />
+
+    <link rel="shortcut icon" href="/static/images/favicon.png">
+
+    <link rel='stylesheet' id='ct_font_awesome-css'  href='/static/css/font-awesome.min.css' type='text/css' media='all' />
+    <link rel='stylesheet' id='base-css'  href='/static/css/base.css' type='text/css' media='screen, projection' />
+    <link rel='stylesheet' id='layout-css'  href='/static/css/layout.css' type='text/css' media='screen, projection' />
+
+    {#  GMWEB CSS      #}
+    <link rel="stylesheet" type="text/css" href="/static/css/othr/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/othr/bootstrap-responsive.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/othr/style.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/othr/pluton.css" />
+    <!--[if IE 7]>
+        <link rel="stylesheet" type="text/css" href="/static/css/othr/pluton-ie7.css" />
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="/static/css/othr/animate.css" />
+    {#  End GMWEB CSS  #}
+
+    {#  GMWEB JS  #}
+    <script type='text/javascript' src='/static/js/jquery.min.js'></script>
+    <script type="text/javascript" src="/static/js/othr/jquery.mixitup.js"></script>
+    <script type="text/javascript" src="/static/js/othr/bootstrap.js"></script>
+    <script type="text/javascript" src="/static/js/othr/modernizr.custom.js"></script>
+    <script type="text/javascript" src="/static/js/othr/jquery.bxslider.js"></script>
+    <script type="text/javascript" src="/static/js/othr/jquery.cslider.js"></script>
+    <script type="text/javascript" src="/static/js/othr/jquery.placeholder.js"></script>
+    <script type="text/javascript" src="/static/js/othr/jquery.inview.js"></script>
+    <script type="text/javascript" src="/static/js/othr/jquery.blockUI.min.js"></script>
+    <!--[if lt IE 9]>
+        <script src="/static/js/othr/respond.min.js"></script>
+    <![endif]-->
+    <script type="text/javascript" src="/static/js/othr/app.js"></script>
+    {#  End GMWEB JS  #}
+
+    <script>
+        $(function(){
+
+            $(".reserva_ok").addClass("invisible");
+            $(".reserva_error").addClass("invisible");
+
+            $(".reservar").click(function () {
+                var pid = $(this).attr('pid');
+                var rid = "";
+                var datosOk = true;
+                {% if registro %}
+                    rid = "{{ registro.id }}";
+                {% endif %}
+                if (!pid || !rid){
+                    datosOk = false;
+                }
+                if (datosOk) {
+                    // ajax al server
+                    $.ajax({
+                        type: "POST",
+                        url: "/reservas",
+                        data: {'action': 'reserva_productos', 'rid': rid, 'pid': pid},
+                        success: function(data) {
+                            if (data.result == 'ok') {
+                                $("#reserva_ok"+pid).removeClass("invisible").addClass("visible");
+                                $("#reserva_error"+pid).html("").removeClass("visible").addClass("invisible");
+                                location.reload();
+                            }
+                            if (data.result == 'exist' || data.result == 'bad') {
+                                $("#reserva_ok"+pid).removeClass("visible").addClass("invisible");
+                                $("#reserva_error"+pid).html(data.mensaje).removeClass("invisible").addClass("visible");
+                            }
+                        },
+                        error: function() {
+                            $("#reserva_ok"+pid).removeClass("visible").addClass("invisible");
+                            $("#reserva_error"+pid).html("Error al guardar los datos. Intente mas tarde").removeClass("invisible").addClass("visible");
+                        },
+                        dataType: "json"
+                    });
+                    return false;
+                }
+            });
+
+        });
+
+    </script>
+
+</head>
+
+<body>
+
+<header id="masthead" class="row">
+    <div id="topbar-wrap">
+        <div class="container">
+            <p class="marB0 left">
+                <a href="/" style="font-size: 17px; color: #fff; font-family: 'Monotype Corsiva'">ENLIVEN</a>
+            </p>
+            <div class="right">
+                <ul class="social left">
+                    {% if not user.is_anonymous %}
+                        <li><a href="#">{{ user.username }}</a></li>
+                        <li>
+                            <a href="/reservas">
+                                <i class="fa fa-shopping-bag"></i> Reservas
+                                {% if cantidad_reservas %}
+                                    <span class="label" style="font-size: 8px;">{{ cantidad_reservas|floatformat:0 }}</span>
+                                {% endif %}
+                            </a>
+                        </li>
+                        <li><a href="/salir"><i class="fa fa-sign-out"></i> Salir</a></li>
+                    {% else %}
+                        <li><a href="/register"><i class="fa fa-user"></i> Login</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+</header>
+<!-- //Masthead -->
+
+<!-- Container -->
+<div class="container" style="padding-top: 80px; padding-bottom: 50px">
+    <!-- Page Content -->
+    <div class="content col span_12">
+        {% if user.is_anonymous %}
+            <div class="alert alert-info">
+                <img src="/static/images/info.png" style="margin: -2px 5px 5px 5px;float: left; padding-right: 10px;" width="24" height="24"/>
+                Para poder reservar <span style="font-weight: bold">productos</span> o <span style="font-weight: bold">servicios</span> debe ingresar con su cuenta de usuario. Gracias.
+            </div>
+        {% endif %}
+        <h3 class="title" style="color: #000;">Productos</h3>
+
+        <div class="section secondary-section">
+            <div class="triangle"></div>
+            <div class="container">
+                <ul class="nav nav-pills">
+                    <li class="filter" data-filter="all">
+                        <a href="#noAction">TODOS</a>
+                    </li>
+                    {% for c in categorias_productos %}
+                        <li class="filter" data-filter="categoria{{ c.id }}">
+                            <a href="#noAction">{{ c.nombre }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                <!-- SLIDING SERVICIOS -->
+                <div id="single-project">
+                    <!-- Ciclo para crear todas las capacitaciones a partir de DB -->
+                    {% for p in productos %}
+                        <div id="info{{ p.id }}" class="toggleDiv row-fluid single-project">
+                            <div class="span6">
+                                <img src="{{ p.download_imagen }}" alt="{{ p.categoria.nombre }} - {{ forloop.counter }}" />
+                            </div>
+                            <div class="span6">
+                                <div class="project-description">
+                                    <div class="project-title clearfix">
+                                        <h3>{{ p.nombre }} </h3>
+                                        <span class="show_hide close">
+                                            <i class="fa fa-times"></i>
+                                        </span>
+                                    </div>
+                                    <div class="project-info">
+                                        <div>
+                                            {% if p.precio %}
+                                                <span style="margin-left: 0.5em">Precio: </span>${{ p.precio|floatformat:2 }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <p style="text-align: justify"> {{ p.descripcion }} </p>
+                                    {% if not user.is_anonymous %}
+                                        <span>
+                                            <a pid='{{ p.id }}' href="#" class="reservar btn btn-primary btn-large btn-block">
+                                                <i class="fa fa-external-link"></i> Reservar Ahora !
+                                            </a>
+                                        </span>
+                                        <br/>
+                                        <div class="alert alert-success invisible reserva_ok" id="reserva_ok{{ p.id }}">
+                                            Se adicion&oacute; el producto con &eacute;xito a su lista de reservas
+                                        </div>
+                                        <div class="alert alert-danger invisible reserva_error" id="reserva_error{{ p.id }}"></div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                    <ul id="portfolio-grid" class="thumbnails row">
+                        {% for p in productos %}
+                            <li class="span3 mix categoria{{ p.categoria.id }}">
+                                <div class="thumbnail">
+                                    <img src="{{ p.download_imagen }}" alt="{{ p.categoria.nombre }} - {{ forloop.counter }}">
+                                    <a href="#single-project" class="show_hide more" rel="#info{{ p.id }}">
+                                        <h5><i class="fa fa-plus"></i> Ver detalles</h5>
+                                    </a>
+                                    <h3>{{ p.nombre }}</h3>
+                                    <p> {{ p.titulo }} </p>
+                                    <div class="mask"></div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="clear"></div>
+</div>
+<!-- //Container -->
+
+<!-- Clear -->
+<div class="clear"></div>
+
+<!-- Footer -->
+<div class="footer">
+    <div id="topbar-wrap">
+        <div class="container">
+            <p class="marB0 left">© 2016 Enliven. Todos los derechos reservados</p>
+            <div class="right">
+                <ul class="social left">
+                    <li class="facebook"><a href="{{ datosempresa.facebook }}" target="_blank"><i class="fa fa-facebook"></i></a></li>
+                    <li class="google"><a href="{{ datosempresa.instagram }}" target="_blank"><i class="fa fa-instagram"></i></a></li>
+                </ul>
+                <div class="contact-phone right">{{ datosempresa.celular }}</div>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+</div>      <!-- //Footer -->
+
+</body>
+</html>

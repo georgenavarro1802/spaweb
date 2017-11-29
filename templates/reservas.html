@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en-US"><![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en-US"><![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en-US"><![endif]-->
+<!--[if (gte IE 9)|!(IE)]><html lang="en-US"><![endif]-->
+<head>
+    <title>{{ title }}</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="WEB SPA Enliven Ecuador" />
+
+    <link rel="shortcut icon" href="/static/images/favicon.png">
+
+    <link rel='stylesheet' id='ct_font_awesome-css'  href='/static/css/font-awesome.css' type='text/css' media='all' />
+    <link rel='stylesheet' id='base-css'  href='/static/css/base.css' type='text/css' media='screen, projection' />
+    <link rel='stylesheet' id='layout-css'  href='/static/css/layout.css' type='text/css' media='screen, projection' />
+
+    {#  GMWEB CSS      #}
+    <link rel="stylesheet" type="text/css" href="/static/css/othr/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/othr/bootstrap-responsive.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/othr/woc-woocommerce.css" />
+    <!--[if IE 7]>
+        <link rel="stylesheet" type="text/css" href="/static/css/othr/pluton-ie7.css" />
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="/static/css/othr/animate.css" />
+    <link href="/static/css/jquery.fancybox.css?v=2.1.4" type="text/css" media="screen" rel="stylesheet"/>
+    {#  End GMWEB CSS  #}
+
+    {#  GMWEB JS  #}
+    <script type='text/javascript' src='/static/js/jquery.min.js'></script>
+    <script type="text/javascript" src="/static/js/othr/jquery.mixitup.js"></script>
+    <script type="text/javascript" src="/static/js/othr/bootstrap.js"></script>
+    <script type="text/javascript" src="/static/js/othr/modernizr.custom.js"></script>
+    <script type="text/javascript" src="/static/js/othr/jquery.bxslider.js"></script>
+    <script type="text/javascript" src="/static/js/othr/jquery.cslider.js"></script>
+    <script type="text/javascript" src="/static/js/othr/jquery.placeholder.js"></script>
+    <script type="text/javascript" src="/static/js/othr/jquery.inview.js"></script>
+    <script type="text/javascript" src="/static/js/othr/jquery.blockUI.min.js"></script>
+    <script src="/static/js/jquery.fancybox.pack.js?v=2.1.4"></script>
+
+    <!--[if lt IE 9]>
+        <script src="/static/js/othr/respond.min.js"></script>
+    <![endif]-->
+    <script type="text/javascript" src="/static/js/othr/app.js"></script>
+    {#  End GMWEB JS  #}
+
+    <script>
+        $(function(){
+
+            $(".fancybox").fancybox();
+
+            numerico = function(elemento, min, max, decimales) {
+                var nvalor;
+                var valor = elemento.val();
+                if (valor==""){
+                    valor = parseFloat(min).toFixed(decimales);
+                    elemento.val(valor);
+                    return;
+                }
+                if (isNaN(valor)){
+                    nvalor = parseFloat(min).toFixed(decimales);
+                    elemento.val(nvalor);
+                    return;
+                }
+                if (valor < min) {
+                    nvalor = parseFloat(min).toFixed(decimales);
+                    elemento.val(nvalor);
+                    return;
+                }
+                if (max>0 && valor>max){
+                    nvalor = parseFloat(max).toFixed(decimales);
+                    elemento.val(nvalor);
+                    return;
+                }
+                nvalor = parseFloat(valor).toFixed(decimales);
+                elemento.val(nvalor);
+            };
+
+            $(".cantidad").blur(function(){
+                numerico($(this), 1, 99999999, 0);
+            });
+
+            $(".confirmar_reserva_producto").click(function () {
+                var rid = $(this).attr('rid');
+                var cant = $("#cantidad"+rid).val();
+                var datosOk = true;
+                if (!rid || !cant){
+                    datosOk = false;
+                }
+                if (datosOk) {
+                    // ajax al server
+                    $.ajax({
+                        type: "POST",
+                        url: "/reservas",
+                        data: {'action': 'confirmar_reserva_producto', 'rid': rid, 'cant': cant},
+                        success: function(data) {
+                            location.reload();
+                        },
+                        error: function() {
+                        },
+                        dataType: "json"
+                    });
+                }
+                return false;
+            });
+
+            $(".confirmar_reserva_servicio").click(function () {
+                var rid = $(this).attr('rid');
+                if (rid){
+                    // ajax al server
+                    $.ajax({
+                        type: "POST",
+                        url: "/reservas",
+                        data: {'action': 'confirmar_reserva_servicio', 'rid': rid},
+                        success: function(data) {
+                            location.reload();
+                        },
+                        error: function() {
+                        },
+                        dataType: "json"
+                    });
+                }
+                return false;
+            });
+
+            $(".tl").tooltip({ placement:"left" });
+            $(".tr").tooltip({ placement:"right" });
+
+        });
+
+    </script>
+
+</head>
+
+<body>
+
+<header id="masthead" class="row">
+    <div id="topbar-wrap">
+        <div class="container">
+            <p class="marB0 left">
+                <a href="/" style="font-size: 17px; color: #fff; font-family: 'Monotype Corsiva'">ENLIVEN</a>
+            </p>
+            <div class="right">
+                <ul class="social left">
+                    {% if not user.is_anonymous %}
+                        <li><a href="#">{{ user.username }}</a></li>
+                        <li>
+                            <a href="/reservas">
+                                <i class="fa fa-shopping-bag"></i> Reservas
+                                {% if cantidad_reservas %}
+                                    <span class="label" style="font-size: 8px;">{{ cantidad_reservas|floatformat:0 }}</span>
+                                {% endif %}
+                            </a>
+                        </li>
+                        <li><a href="/salir"><i class="fa fa-sign-out"></i> Salir</a></li>
+                    {% else %}
+                        <li><a href="/register"><i class="fa fa-user"></i> Login</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+</header>
+<!-- //Masthead -->
+
+<!-- Container -->
+<div class="container" style="padding-top: 80px; padding-bottom: 50px">
+
+    <div class="content col span12">
+        <div class="section">
+
+            <h3>
+                Reserva de Productos
+                <a href="/productos" class="btn btn-info btn-mini" style="float: right"> Ir a Productos</a>
+            </h3>
+            <table class="table table-bordered">
+                <thead>
+                <tr style="background-color: #000">
+                    <th style="width: 100px; color: orange"></th>
+                    <th style="color: #FECE1A">Producto</th>
+                    <th style="width: 70px; color: #FECE1A; text-align: center">Cantidad</th>
+                    <th style="width: 80px; color: #FECE1A; text-align: center">Estado</th>
+                    <th style="width: 70px"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for r in reserva_productos %}
+                    <tr>
+                        <td style="text-align: center">
+                            <a href='{% if r.producto.imagen %}{{ r.producto.download_imagen }}{% endif %}' class="{% if r.producto.imagen %}fancybox{% endif %}" rel="group">
+                                <img src="{{ r.producto.download_imagen }}" width="70px" height="70px">
+                            </a>
+                        </td>
+                        <td style="vertical-align: middle">
+                            {{ r.producto.nombre }}
+                            <p style="font-size: 11px">{{ r.producto.titulo }}</p>
+                        </td>
+                        <td style="text-align: center; vertical-align: middle; font-size: 15px">
+                            {% if r.estado == 0 %}
+                                <input type="text" style="width: 40px; text-align: right" value="{{ r.cantidad }}" class="cantidad" id="cantidad{{ r.id }}"/>
+                            {% else %}
+                                {{ r.cantidad }}
+                            {% endif %}
+                        </td>
+                        <td style="text-align: center; font-size: 11px; vertical-align: middle">
+                            <label class="label {% if r.estado == 1 %}label-info{% endif %}{% if r.estado == 2 %}label-success{% endif %}{% if r.estado == 3 %}label-important{% endif %}">
+                                {{ r.get_estado_display }}
+                            </label>
+                        </td>
+                        <td style="text-align: center; vertical-align: middle">
+                            {% if r.estado == 0 %}
+                                <a href="#" title="Confirmar" class="confirmar_reserva_producto" style="float: left; margin-left: 0.3em" rid="{{ r.id }}">
+                                    <img src="/static/images/sign-ok.png" class="tl" align="Confirmar" title="Confirmar"/>
+                                </a>
+                                <a href="/reservas?action=eliminar_reserva_producto&id={{ r.id }}" title="Eliminar" class="eliminar" style="float: left; margin-left: 0.3em">
+                                    <img src="/static/images/sign-delete.png" class="tr" align="Eliminar" title="Eliminar"/>
+                                </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="10" style="font-size: 17px; font-family: 'Monotype Corsiva'"><i>No tiene productos reservados</i></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="clear"></div>
+
+    <div class="content col span12">
+        <div class="section">
+            <h3>
+                Reserva de Servicios
+                <a href="/servicios" class="btn btn-info btn-mini" style="float: right"> Ir a Servicios</a>
+            </h3>
+            <table class="table table-bordered">
+                <thead>
+                <tr style="background-color: #000">
+                    <th style="width: 100px"></th>
+                    <th style="color: #FECE1A">Servicio</th>
+                    <th style="width: 100px; color: #FECE1A; text-align: center">Fecha Serv.</th>
+                    <th style="width: 80px; color: #FECE1A; text-align: center">Estado</th>
+                    <th style="width: 70px"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for r in reserva_servicios %}
+                    <tr>
+                        <td style="text-align: center">
+                            <a href='{% if r.servicio.imagen %}{{ r.servicio.download_imagen }}{% endif %}' class="{% if r.servicio.imagen %}fancybox{% endif %}" rel="group">
+                                <img src="{{ r.servicio.download_imagen }}" width="70px" height="70px">
+                            </a>
+                        </td>
+                        <td style="vertical-align: middle">
+                            {{ r.servicio.nombre }}
+                            <p style="font-size: 11px">{{ r.servicio.titulo }}</p>
+                        </td>
+                        <td style="vertical-align: middle; text-align: center">
+                            {{ r.fecha_servicio|date:'d-m-Y' }}
+                        </td>
+                        <td style="text-align: center; font-size: 11px; vertical-align: middle">
+                            <label class="label {% if r.estado == 1 %}label-info{% endif %}{% if r.estado == 2 %}label-success{% endif %}{% if r.estado == 3 %}label-important{% endif %}">
+                                {{ r.get_estado_display }}
+                            </label>
+                        </td>
+                        <td style="text-align: center; vertical-align: middle">
+                            {% if r.estado == 0 %}
+                                <a href="#" title="Confirmar" class="confirmar_reserva_servicio" style="float: left; margin-left: 0.3em" rid="{{ r.id }}">
+                                    <img src="/static/images/sign-ok.png" class="tl" align="Confirmar" title="Confirmar"/>
+                                </a>
+                                <a href="/reservas?action=eliminar_reserva_servicio&id={{ r.id }}" title="Eliminar" class="eliminar" style="float: left; margin-left: 0.3em">
+                                    <img src="/static/images/sign-delete.png" class="tr" align="Eliminar" title="Eliminar"/>
+                                </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="10" style="font-size: 17px; font-family: 'Monotype Corsiva'"><i>No tiene servicios reservados</i></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- //Container -->
+
+<!-- Clear -->
+<div class="clear"></div>
+
+<!-- Footer -->
+<div class="footer">
+    <div id="topbar-wrap">
+        <div class="container">
+            <p class="marB0 left">© 2016 Enliven. All Rights Reserved</p>
+            <div class="right">
+                <ul class="social left">
+                    <li class="facebook"><a href="{{ datosempresa.facebook }}"><i class="fa fa-facebook"></i></a></li>
+                    <li class="twitter"><a href="{{ datosempresa.twitter }}"><i class="fa fa-twitter"></i></a></li>
+                    <li class="linkedin"><a href="{{ datosempresa.linkedin }}"><i class="fa fa-linkedin"></i></a></li>
+                    <li class="google"><a href="{{ datosempresa.googleplus }}"><i class="fa fa-google-plus"></i></a></li>
+                </ul>
+                <div class="contact-phone right">{{ datosempresa.celular }}</div>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+</div>      <!-- //Footer -->
+
+</body>
+</html>

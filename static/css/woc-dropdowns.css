@@ -1,0 +1,131 @@
+/*
+* Woc Dropdowns
+*
+* @package WP Day Spa
+* @subpackage CSS
+*/
+
+/* set menu position; change here to set to relative or float, etc. */
+.cbp-tm-menu {
+    position: relative;
+    font-size: 14px !important;
+    z-index: 9999999;
+    margin: 0;
+    text-transform: capitalize;
+}
+
+/* first level menu items */
+.cbp-tm-menu > li {
+    font-family: "Lato", sans-serif;
+    display: inline-block;
+    padding: 0 15px;
+    position: relative;
+    border-top: 5px solid rgba(160,217,188,0);
+}
+.cbp-tm-menu > li:first-child {}
+.cbp-tm-menu > li.current-menu-item:first-child {}
+.cbp-tm-menu > li {}
+
+.cbp-tm-menu > li > a {
+    position: relative;
+    z-index: 999999;
+    text-align: center;
+    position: relative;
+    padding: 25px 0;
+    display: block;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 600;
+}
+.cbp-tm-menu > li > a { border-top-color: rgba(160,217,188,0.9);}
+
+.cbp-tm-menu i { position: absolute; left: 42%; top: 65%; color: #555;}
+.cbp-tm-menu > li:first-child > a { padding-left: 0;}
+.cbp-tm-menu > li:last-child > a { width: auto;}
+.cbp-tm-menu li.current-menu-item,
+.cbp-tm-menu li.current_page_parent { border-top: 5px solid rgba(255,255,255,0.9);}
+.cbp-tm-menu.current_page_parent li.current_menu_item { background: #000 !important;}
+.cbp-tm-menu li li.current-menu-item { border-top: 0 !important;}
+
+.no-touch .cbp-tm-menu > li > a:hover,
+.no-touch .cbp-tm-menu > li > a:active {
+    opacity: 0.9;
+}
+
+/* sumbenu with transitions */
+.sub-menu {
+    position: absolute;
+    display: block;
+    visibility: hidden;
+    opacity: 0;
+    padding: 0;
+    font-size: 12px;
+    text-transform: uppercase;
+    text-align: left;
+    pointer-events: none;
+    -webkit-transition: visibility 0s, opacity 0s;
+    -moz-transition: visibility 0s, opacity 0s;
+    transition: visibility 0s, opacity 0s;
+    z-index: 999999;
+}
+
+.cbp-tm-show .sub-menu {
+    width: 16em;
+    top: 0;
+    left: 0;
+    margin: 0;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    -webkit-transition: visibility 0s, opacity 0.3s;
+    -moz-transition: visibility 0s, opacity 0.3s;
+    transition: visibility 0s, opacity 0.3s;
+}
+
+.cbp-tm-show-above .sub-menu {
+    bottom: 100%;
+}
+
+.cbp-tm-show-below .sub-menu {
+    top: 100%;
+}
+
+/* extreme cases: not enough space on the sides */
+.cbp-tm-nospace-right .sub-menu {
+    right: 0;
+    left: auto;
+}
+
+.cbp-tm-nospace-left .sub-menu {
+    left: 0;
+}
+
+/* last menu item has to fit on the screen */
+.cbp-tm-menu > li:last-child .sub-menu {
+    right: 0;
+}
+
+.sub-menu > li {
+    display: block;
+    background: rgba(109,104,110,0.9); !important;
+}
+
+.sub-menu > li > a {
+    padding: 10px 15px; /* top/bottom paddings in 'em' cause a tiny "jump" in Chrome on Win */
+    display: block;
+    position: relative;
+    color: #fff;
+    font-size: 0.9em;
+    border-bottom: 1px solid rgba(255,255,255,0.5);
+    -webkit-transition: all 0.2s;
+    -moz-transition: all 0.2s;
+    transition: all 0.2s;
+}
+.sub-menu > li:last-child > a { border-bottom: 5px solid rgba(255,255,255,0.5); border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;}
+
+.no-touch .sub-menu > li > a:hover,
+.no-touch .sub-menu > li > a:active {
+    color: #fff !important;
+    opacity: 0.7;
+}

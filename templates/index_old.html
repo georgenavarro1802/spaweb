@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ title }}</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="WEB SPA Enliven Ecuador" />
+
+    <link rel="shortcut icon" href="/static/images/favicon.png">
+
+    <link href="/static/css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="/static/css/style.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="/static/css/settings.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="/static/css/base.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="/static/css/layout.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="/static/css/woc-dropdowns.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="/static/css/chocolat.css" rel="stylesheet" type="text/css" media="screen">
+    <link href="/static/css/font-awesome.min.css" rel="stylesheet" type="text/css" media="screen">
+    <link href="/static/css/owl.carousel.css" rel="stylesheet">
+
+    <style type='text/css'>
+
+        .tp-caption a{
+            border-radius:5px;
+            font-size:14px;
+            border:none;
+            -webkit-transition:color 1s ease-in;
+            -moz-transition:color 1s ease-in;
+            -o-transition:color 1s ease-in;
+            transition:color 1s ease-in;
+            padding:1em 1.4em !important;
+            line-height:0.8em; text-align:center;
+            text-transform:uppercase;
+            color:#fff !important;
+            background:rgba(109,104,110,1)
+        }
+
+        .tp-caption a:hover{
+            cursor:pointer;
+            opacity:0.85;
+            -moz-opacity:0.85;
+            -webkit-opacity:0.85
+        }
+
+        .tp-caption.modern_medium_light,.modern_medium_light{
+            font-size:18px;line-height:26px;font-weight:300;font-family:"Open Sans",sans-serif;color:rgb(85,85,85);text-decoration:none;text-shadow:none;margin:0px;white-space:nowrap;background-color:transparent;border-width:0px;border-color:rgb(0,0,0);border-style:none
+        }
+
+        .tp-caption.black,.black{
+            font-size:32px;font-weight:800;font-family:Montserrat,Helvetica,sans-serif;color:rgb(85,85,85);text-decoration:none;text-shadow:none;background-color:transparent;border-width:0px;border-color:rgb(0,0,0);border-style:none
+        }
+
+        body {
+            font-family: "Oxygen-Regular", serif !important
+        }
+
+    </style>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/jquery.themepunch.tools.min.js"></script>
+    <script src="/static/js/jquery.themepunch.revolution.min.js"></script>
+
+    <!--moving-->
+    <script src="/static/js/move-top.js"></script>
+    <script src="/static/js/easing.js"></script>
+    <script src="/static/js/jquery.chocolat.js"></script>
+    <script src="/static/js/owl.carousel.js"></script>
+
+    <script>
+        addEventListener("load", function() {
+            setTimeout(hideURLbar, 0);
+        }, false);
+
+        function hideURLbar(){
+            window.scrollTo(0,1);
+        }
+
+        $(function($) {
+
+            $(".scroll").click(function(event){
+                event.preventDefault();
+                $('html, body').animate({scrollTop:$(this.hash).offset().top}, 1000);
+            });
+
+            $('.gallery-grid a').Chocolat();
+
+            $("#owl-demo").owlCarousel({
+                items : 1,
+                lazyLoad : true,
+                autoPlay : true,
+                navigation : false,
+                navigationText :  false,
+                pagination : true
+            });
+
+            $().UItoTop({easingType: 'easeOutQuart'});
+
+            $("span.menu").click(function(){
+                console.log('hola');
+                $(".top-nav ul").slideToggle(500, function(){ });
+            });
+
+            /***** Newsletter ******/
+            $('#subscribe').click(function () {
+                var error = false;
+                var emailCompare = /^([a-z0-9_.-]+)@([0-9a-z.-]+).([a-z.]{2,6})$/;
+                var email = $('#nlmail').val().toLowerCase();
+                if (email == "" || email == " " || !emailCompare.test(email)) {
+                    $('#success-subscribe').addClass('invisible');
+                    $('#info-subscribe').addClass('invisible');
+                    $('#error-subscribe').addClass('invisible');
+                    $('#error-subscribe-email').removeClass('invisible').show(1000).delay(4000).animate({height: 'toggle'}, 1000, function () { });
+                    error = true;
+                }
+
+                if (error === false) {
+                    var crmw = document.getElementsByName("csrfmiddlewaretoken_suscripciones")[0].value;
+                    $.post("/suscripciones", {"email": email, "csrfmiddlewaretoken":crmw}, function(data){
+                        if (data.result=='ok'){
+                            $('#nlmail').val('');
+                            $('#error-subscribe-email').addClass('invisible');
+                            $('#info-subscribe').addClass('invisible');
+                            $('#error-subscribe').addClass('invisible');
+                            $('#success-subscribe').removeClass('invisible').show(1000).delay(4000).animate({height: 'toggle'}, 1000, function () { }); //Mostrar mensaje de exito de suscripcion, luego esconder a los 5 seg
+                            setTimeout(function() {
+                                $('#success-subscribe').fadeOut("slow");
+                            }, 5000);
+                        }else if (data.result == 'exist'){
+                            $('#nlmail').val('');
+                            $('#error-subscribe-email').addClass('invisible');
+                            $('#success-subscribe').addClass('invisible');
+                            $('#error-subscribe').addClass('invisible');
+                            $('#info-subscribe').removeClass('invisible').show(1000).delay(4000).animate({height: 'toggle'}, 1000, function () { }); //Mostrar mensaje de informacion que ya esta suscrito
+                            setTimeout(function() {
+                                $('#info-subscribe').fadeOut("slow");
+                            }, 5000);
+                        }else{
+                            //Mostrar mensaje de fallo de suscripcion por algun error
+                            $('#nlmail').val('');
+                            $('#error-subscribe-email').addClass('invisible');
+                            $('#success-subscribe').addClass('invisible');
+                            $('#info-subscribe').addClass('invisible');
+                            $('#error-subscribe').removeClass('invisible').show(1000).delay(4000).animate({height: 'toggle'}, 1000, function () { });
+                            setTimeout(function() {
+                                $('#error-subscribe').fadeOut("slow");
+                            }, 3000);
+                        }
+                    }, "json");
+                }
+                return false;
+            });
+
+            /****** Contact Form Send mail *****/
+
+            $("#contact-send").click(function () {
+                var name = $('#contact-name').val(); // get the value of the input field
+                var error = false;
+                if (name == "" || name == " ") {
+                    $('#err-name').show(500);
+                    $('#err-name').delay(4000);
+                    $('#err-name').animate({
+                        height: 'toggle'
+                    }, 500, function () {
+                        // Animation complete.
+                    });
+                    error = true; // change the error state to true
+                }
+
+                var emailCompare = /^([a-z0-9_.-]+)@([da-z.-]+).([a-z.]{2,6})$/; // Syntax to compare against input
+                var email = $('#contact-email').val().toLowerCase(); // get the value of the input field
+                if (email == "" || email == " " || !emailCompare.test(email)) {
+                    $('#err-email').show(500);
+                    $('#err-email').delay(4000);
+                    $('#err-email').animate({
+                        height: 'toggle'
+                    }, 500, function () {
+                        // Animation complete.
+                    });
+                    error = true; // change the error state to true
+                }
+
+                var comment = $('#contact-comment').val(); // get the value of the input field
+                if (comment == "" || comment == " ") {
+                    $('#err-comment').show(500);
+                    $('#err-comment').delay(4000);
+                    $('#err-comment').animate({
+                        height: 'toggle'
+                    }, 500, function () {
+                        // Animation complete.
+                    });
+                    error = true; // change the error state to true
+                }
+
+                if (error == false) {
+                    $.post("/contactos", {"nombre": name, "email": email, "mensaje": comment}, function(data){
+                        $("#contact-name").val('');
+                        $("#contact-email").val('');
+                        $("#contact-comment").val('');
+                        if (data.result=='ok'){
+                            $('#errorSend').addClass('invisible');
+                            $('#successSend').removeClass('invisible').show(1000).delay(4000).animate({height: 'toggle'}, 1000, function () { });
+                            setTimeout(function() {
+                                $('#successSend').fadeOut("slow");
+                            }, 5000);
+                        }else{
+                            //Mostrar mensaje de fallo en envio
+                            $('#successSend').addClass('invisible');
+                            $('#errorSend').removeClass('invisible').show(1000).delay(4000).animate({height: 'toggle'}, 1000, function () { });
+                            setTimeout(function() {
+                                $('#errorSend').fadeOut("slow");
+                            }, 3000);
+                        }
+                    }, "json");
+                }
+                return false;
+            });
+
+            chequearsesion = function(){
+                $.ajax({
+                    type: "POST",
+                    url: "/checksession",
+                    success: function(data) {
+                        if (data.result == 'ok') {
+                            if (data.nuevasesion){
+                                location.href = '/salir';
+                            }
+                        }
+                    },
+                    dataType: "json"
+                });
+            };
+
+            setInterval(chequearsesion, 10000);
+
+            $(".mapas").click(function () {
+                var mid = parseInt($(this).attr("mid"));
+                $(".mapas").removeClass("active");
+                $(this).addClass("active");
+                if (mid == 1){
+                    $("#mapa1").show();
+                    $("#mapa2").hide();
+                }else{
+                    $("#mapa1").hide();
+                    $("#mapa2").show();
+                }
+                return false;
+            });
+
+        });
+
+    </script>
+
+    <script>
+
+        /******************************************
+         -	PREPARE PLACEHOLDER FOR SLIDER	-
+         ******************************************/
+
+        var setREVStartSize = function() {
+            var	tpopt = new Object();
+            tpopt.startwidth = 1100;
+            tpopt.startheight = 500;
+            tpopt.container = jQuery('#rev_slider_1_1');
+            tpopt.fullScreen = "off";
+            tpopt.forceFullWidth="off";
+
+            tpopt.container.closest(".rev_slider_wrapper").css({height:tpopt.container.height()});tpopt.width=parseInt(tpopt.container.width(),0);tpopt.height=parseInt(tpopt.container.height(),0);tpopt.bw=tpopt.width/tpopt.startwidth;tpopt.bh=tpopt.height/tpopt.startheight;if(tpopt.bh>tpopt.bw)tpopt.bh=tpopt.bw;if(tpopt.bh<tpopt.bw)tpopt.bw=tpopt.bh;if(tpopt.bw<tpopt.bh)tpopt.bh=tpopt.bw;if(tpopt.bh>1){tpopt.bw=1;tpopt.bh=1}if(tpopt.bw>1){tpopt.bw=1;tpopt.bh=1}tpopt.height=Math.round(tpopt.startheight*(tpopt.width/tpopt.startwidth));if(tpopt.height>tpopt.startheight&&tpopt.autoHeight!="on")tpopt.height=tpopt.startheight;if(tpopt.fullScreen=="on"){tpopt.height=tpopt.bw*tpopt.startheight;var cow=tpopt.container.parent().width();var coh=jQuery(window).height();if(tpopt.fullScreenOffsetContainer!=undefined){try{var offcontainers=tpopt.fullScreenOffsetContainer.split(",");jQuery.each(offcontainers,function(e,t){coh=coh-jQuery(t).outerHeight(true);if(coh<tpopt.minFullScreenHeight)coh=tpopt.minFullScreenHeight})}catch(e){}}tpopt.container.parent().height(coh);tpopt.container.height(coh);tpopt.container.closest(".rev_slider_wrapper").height(coh);tpopt.container.closest(".forcefullwidth_wrapper_tp_banner").find(".tp-fullwidth-forcer").height(coh);tpopt.container.css({height:"100%"});tpopt.height=coh;}else{tpopt.container.height(tpopt.height);tpopt.container.closest(".rev_slider_wrapper").height(tpopt.height);tpopt.container.closest(".forcefullwidth_wrapper_tp_banner").find(".tp-fullwidth-forcer").height(tpopt.height);}
+        };
+
+        /* CALL PLACEHOLDER */
+        setREVStartSize();
+
+        var tpj=jQuery;
+        tpj.noConflict();
+        var revapi1;
+
+        tpj(document).ready(function() {
+
+            if(tpj('#rev_slider_1_1').revolution == undefined){
+                revslider_showDoubleJqueryError('#rev_slider_1_1');
+            }else{
+                revapi1 = tpj('#rev_slider_1_1').show().revolution(
+                        {
+                            dottedOverlay:"none",
+                            delay:9000,
+                            startwidth:1100,
+                            startheight:500,
+                            hideThumbs:200,
+
+                            thumbWidth:100,
+                            thumbHeight:50,
+                            thumbAmount:2,
+
+                            simplifyAll:"off",
+
+                            navigationType:"none",
+                            navigationArrows:"solo",
+                            navigationStyle:"preview2",
+
+                            touchenabled:"on",
+                            onHoverStop:"on",
+                            nextSlideOnWindowFocus:"off",
+
+                            swipe_threshold: 75,
+                            swipe_min_touches: 1,
+                            drag_block_vertical: false,
+
+                            parallax:"mouse",
+                            parallaxBgFreeze:"off",
+                            parallaxLevels:[5,10,15,20,25,30,35,40,45,50],
+
+                            keyboardNavigation:"off",
+
+                            navigationHAlign:"center",
+                            navigationVAlign:"bottom",
+                            navigationHOffset:0,
+                            navigationVOffset:20,
+
+                            soloArrowLeftHalign:"left",
+                            soloArrowLeftValign:"center",
+                            soloArrowLeftHOffset:20,
+                            soloArrowLeftVOffset:0,
+
+                            soloArrowRightHalign:"right",
+                            soloArrowRightValign:"center",
+                            soloArrowRightHOffset:20,
+                            soloArrowRightVOffset:0,
+
+                            shadow:0,
+                            fullWidth:"on",
+                            fullScreen:"off",
+
+                            spinner:"spinner5",
+
+                            stopLoop:"off",
+                            stopAfterLoops:-1,
+                            stopAtSlide:-1,
+
+                            shuffle:"off",
+
+                            autoHeight:"off",
+                            forceFullWidth:"off",
+
+                            hideThumbsOnMobile:"off",
+                            hideNavDelayOnMobile:1500,
+                            hideBulletsOnMobile:"off",
+                            hideArrowsOnMobile:"off",
+                            hideThumbsUnderResolution:0,
+
+                            hideSliderAtLimit:0,
+                            hideCaptionAtLimit:0,
+                            hideAllCaptionAtLilmit:0,
+                            startWithSlide:0
+                        });
+
+            }
+        });	/*ready*/
+
+    </script>
+
+</head>
+
+<body>
+
+<!-- Masthead -->
+<header id="masthead" class="row">
+
+    <div id="topbar-wrap">
+
+        <div class="container">
+            <p class="marB0 left">{{ datosempresa.slogan }}</p>
+            <div class="right">
+                <ul class="social left">
+                    <li class="facebook"><a href="{{ datosempresa.facebook }}"><i class="fa fa-facebook"></i></a></li>
+                    <li class="twitter"><a href="{{ datosempresa.twitter }}"><i class="fa fa-twitter"></i></a></li>
+                    <li class="linkedin"><a href="{{ datosempresa.linkedin }}"><i class="fa fa-linkedin"></i></a></li>
+                    <li class="google"><a href="{{ datosempresa.googleplus }}"><i class="fa fa-google-plus"></i></a></li>
+                    {% if not user.is_anonymous %}
+                        <li><a href="#">{{ user.username }}</a></li>
+                        <li>
+                            <a href="/reservas">
+                                <i class="fa fa-shopping-bag"></i> Reservas
+                                {% if cantidad_reservas %}
+                                    <span class="badge" style="font-size: 9px;">{{ cantidad_reservas|floatformat:0 }}</span>
+                                {% endif %}
+                            </a>
+                        </li>
+                        <li><a href="/salir"><i class="fa fa-sign-out"></i> Salir</a></li>
+                    {% else %}
+                        <li><a href="/register"><i class="fa fa-user"></i> Login</a></li>
+                    {% endif %}
+                </ul>
+                <div class="contact-phone right">{{ datosempresa.celular }}</div>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="logo">
+            <a href="#">
+                <img class="site-logo" src="http://wp.contempographicdesign.com/wp_day_spa/wp-content/themes/day-spa/images/day-spa-logo.png" alt="WP Day Spa, a WordPress theme by Contempo"/>
+            </a>
+        </div>
+
+        <div class="top-nav">
+            <span class="menu">
+                <img src="/static/images/menu.png" alt="">
+            </span>
+            <ul>
+                <li class="active"><a href="#welcome" class="scroll">Welcome</a></li>
+                <li><a href="#about" class="scroll">About</a></li>
+                <li><a href="#services" class="scroll">Beauty</a></li>
+                <li><a href="#gallery" class="scroll">Gallery</a></li>
+                {% if datosempresa.seccion_team %}
+                    <li><a href="#team" class="scroll">Team</a></li>
+                {% endif %}
+                <li><a href="/servicios">Services</a></li>
+                <li><a href="/productos">Products</a></li>
+                <li><a href="#contact" class="scroll">Contact</a></li>
+            </ul>
+        </div>
+        <div class="clearfix"> </div>
+    </div>
+
+    <div class="mobile-nav col-md-12 first"></div>
+    <div class="clearfix"></div>
+
+</header>
+<!-- //Masthead -->
+
+<!-- Revolution Slider -->
+<div id="rev_slider_1_1_wrapper" class="rev_slider_wrapper fullwidthbanner-container" style="padding:0; margin: 0 auto;max-height:500px;">
+    <!-- START REVOLUTION SLIDER 4.6.3 fullwidth mode -->
+    <div id="rev_slider_1_1" class="rev_slider fullwidthabanner" style="display:none;max-height:500px;height:500px;">
+        <ul>	<!-- SLIDE  -->
+            <li data-transition="fade" data-slotamount="7" data-masterspeed="300" data-thumb=""  data-saveperformance="off"  data-title="Beauty">
+                <!-- MAIN IMAGE -->
+{#                <img src="/static/images/slide-1-bg.png"  alt="slide-1-bg"  data-bgposition="center top" data-bgfit="cover" data-bgrepeat="no-repeat">#}
+                <!-- LAYERS -->
+
+{#                <!-- LAYER NR. 1 -->#}
+{#                <div class="tp-caption tp-fade rs-parallaxlevel-4"#}
+{#                     data-x="347"#}
+{#                     data-y="58"#}
+{#                     data-speed="300"#}
+{#                     data-start="500"#}
+{#                     data-easing="Power3.easeInOut"#}
+{#                     data-elementdelay="0.1"#}
+{#                     data-endelementdelay="0.1"#}
+{#                     data-endspeed="300" style="z-index: 5;">#}
+{#                    <img src="/static/images/flower-blur-4.png" alt="" data-ww="100.05511811023621" data-hh="97">#}
+{#                </div>#}
+
+                <!-- LAYER NR. 2 -->
+{#                <div class="tp-caption tp-fade rs-parallaxlevel-3"#}
+{#                     data-x="200"#}
+{#                     data-y="418"#}
+{#                     data-speed="300"#}
+{#                     data-start="500"#}
+{#                     data-easing="Power3.easeInOut"#}
+{#                     data-elementdelay="0.1"#}
+{#                     data-endelementdelay="0.1"#}
+{#                     data-endspeed="300" style="z-index: 6;">#}
+{#                    <img src="/static/images/flower-blur-3.png" alt="" data-ww="182.15533980582524" data-hh="177">#}
+{#                </div>#}
+
+                <!-- LAYER NR. 3 -->
+{#                <div class="tp-caption tp-fade rs-parallaxlevel-1"#}
+{#                     data-x="854"#}
+{#                     data-y="37"#}
+{#                     data-speed="1000"#}
+{#                     data-start="500"#}
+{#                     data-easing="Power3.easeInOut"#}
+{#                     data-elementdelay="0.1"#}
+{#                     data-endelementdelay="0.1"#}
+{#                     data-endspeed="300" style="z-index: 7;">#}
+{#                    <img src="/static/images/flower-blur-1.png" alt="" data-ww="152.53061224489795" data-hh="148">#}
+{#                </div>#}
+
+                <!-- LAYER NR. 4 -->
+                <div class="tp-caption tp-fade rs-parallaxlevel-0"
+                     data-x="-100"
+                     data-y="2"
+                     data-speed="800"
+                     data-start="500"
+                     data-easing="Power3.easeInOut"
+                     data-elementdelay="0.1"
+                     data-endelementdelay="0.1"
+                     data-endspeed="300" style="z-index: 8;">
+{#                    <img src="/static/images/woman-3.png" alt="">#}
+                    <img src="/static/images/foto1p.jpg" alt="">
+                </div>
+
+                <!-- LAYER NR. 5 -->
+                <div class="tp-caption black tp-fade fadeout tp-resizeme rs-parallaxlevel-0"
+                     data-x="41"
+                     data-y="190"
+                     data-speed="500"
+                     data-start="500"
+                     data-easing="Power3.easeInOut"
+                     data-splitin="none"
+                     data-splitout="none"
+                     data-elementdelay="0.1"
+                     data-endelementdelay="0.1"
+                     data-endspeed="300" style="z-index: 9; white-space: nowrap;">
+                    Bienvenidos a EnLiven Spa
+                </div>
+
+                <!-- LAYER NR. 6 -->
+                <div class="tp-caption modern_medium_light tp-fade fadeout tp-resizeme rs-parallaxlevel-0"
+                     data-x="41"
+                     data-y="233"
+                     data-speed="600"
+                     data-start="500"
+                     data-easing="Power3.easeInOut"
+                     data-splitin="none"
+                     data-splitout="none"
+                     data-elementdelay="0.1"
+                     data-endelementdelay="0.1"
+                     data-endspeed="300" style="z-index: 10; max-width: 484px; max-height: 96px; white-space: nowrap;">
+                    Un maravilloso lugar lleno de paz, <br />
+                    con excelentes profesionales en salud y belleza, <br />
+                    trabajando en el cuidado de tu salud, tu imagen y tu vida
+                </div>
+
+                <!-- LAYER NR. 7 -->
+                <div class="tp-caption modern_medium_light tp-fade fadeout tp-resizeme rs-parallaxlevel-0"
+                     data-x="43"
+                     data-y="349"
+                     data-speed="800"
+                     data-start="500"
+                     data-easing="Power3.easeInOut"
+                     data-splitin="none"
+                     data-splitout="none"
+                     data-elementdelay="0.1"
+                     data-endelementdelay="0.1"
+                     data-endspeed="300" style="z-index: 11; max-width: 484px; max-height: 96px; white-space: nowrap;">
+                    <a href='/servicios' class=btn'>Reserva hoy</a>
+                </div>
+            </li>
+            <!-- SLIDE  -->
+            <li data-transition="fade" data-slotamount="7" data-masterspeed="300" data-thumb="/static/images/bg2-320x200.png"  data-saveperformance="off"  data-title="WooCommerce">
+                <!-- MAIN IMAGE -->
+                <img src="/static/images/bg2.png"  alt="bg2"  data-bgposition="center top" data-bgfit="cover" data-bgrepeat="no-repeat">
+                <!-- LAYERS -->
+
+                <!-- LAYER NR. 1 -->
+                <div class="tp-caption black tp-fade fadeout tp-resizeme rs-parallaxlevel-0"
+                     data-x="41"
+                     data-y="190"
+                     data-speed="500"
+                     data-start="500"
+                     data-easing="Power3.easeInOut"
+                     data-splitin="none"
+                     data-splitout="none"
+                     data-elementdelay="0.1"
+                     data-endelementdelay="0.1"
+                     data-endspeed="300" style="z-index: 5; white-space: nowrap;">
+                    Reserva un producto hoy
+                </div>
+
+                <!-- LAYER NR. 2 -->
+                <div class="tp-caption modern_medium_light tp-fade fadeout tp-resizeme rs-parallaxlevel-0"
+                     data-x="41"
+                     data-y="233"
+                     data-speed="600"
+                     data-start="500"
+                     data-easing="Power3.easeInOut"
+                     data-splitin="none"
+                     data-splitout="none"
+                     data-elementdelay="0.1"
+                     data-endelementdelay="0.1"
+                     data-endspeed="300" style="z-index: 6; white-space: nowrap;">
+                    Todos nuestros productos son 100% originales <br/>
+                    Trabajamos con los mejores productos y t&eacute;cnicas, <br/>
+                    garantizando el bienestar y satisfacci&oacute;n de los clientes
+                </div>
+
+                <!-- LAYER NR. 3 -->
+                <div class="tp-caption lfr fadeout rs-parallaxlevel-0"
+                     data-x="-307"
+                     data-y="-10"
+                     data-speed="600"
+                     data-start="800"
+                     data-easing="Power3.easeInOut"
+                     data-elementdelay="0.1"
+                     data-endelementdelay="0.1"
+                     data-endspeed="300"style="z-index: 7;">
+                    <img src="/static/images/after-shave.png" alt="">
+                </div>
+
+                <!-- LAYER NR. 4 -->
+                <div class="tp-caption lfr rs-parallaxlevel-0"
+                     data-x="-320"
+                     data-y="-24"
+                     data-speed="800"
+                     data-start="600"
+                     data-easing="Power3.easeInOut"
+                     data-elementdelay="0.1"
+                     data-endelementdelay="0.1"
+                     data-endspeed="500"
+                     style="z-index: 8;">
+                    <img src="/static/images/pomade.png" alt="">
+                </div>
+
+                <!-- LAYER NR. 5 -->
+                <div class="tp-caption lfr fadeout rs-parallaxlevel-0"
+                     data-x="-313"
+                     data-y="-48"
+                     data-speed="1000"
+                     data-start="700"
+                     data-easing="Power3.easeInOut"
+                     data-elementdelay="0.1"
+                     data-endelementdelay="0.1"
+                     data-endspeed="700"
+                     style="z-index: 9;">
+                    <img src="/static/images/brush.png" alt="">
+                </div>
+
+                <!-- LAYER NR. 6 -->
+                <div class="tp-caption lfr fadeout rs-parallaxlevel-0"
+                     data-x="-314"
+                     data-y="-32"
+                     data-speed="1200"
+                     data-start="800"
+                     data-easing="Power3.easeInOut"
+                     data-elementdelay="0.1"
+                     data-endelementdelay="0.1"
+                     data-endspeed="900"
+                     style="z-index: 10;">
+                    <img src="/static/images/skin-care.png" alt="">
+                </div>
+
+                <!-- LAYER NR. 7 -->
+                <div class="tp-caption modern_medium_light tp-fade fadeout tp-resizeme rs-parallaxlevel-0"
+                     data-x="43"
+                     data-y="349"
+                     data-speed="800"
+                     data-start="500"
+                     data-easing="Power3.easeInOut"
+                     data-splitin="none"
+                     data-splitout="none"
+                     data-elementdelay="0.1"
+                     data-endelementdelay="0.1"
+                     data-endspeed="300"
+                     style="z-index: 11; white-space: nowrap;">
+                    <a href='/productos' class=btn'>Reserva hoy</a>
+                </div>
+            </li>
+        </ul>
+        <div class="tp-bannertimer tp-bottom"></div>
+    </div>
+</div>
+{#</div><!-- END REVOLUTION SLIDER -->#}
+
+<!--content-->
+<div class="content">
+
+    <div class="container" id="welcome">
+        <!--Welcome-->
+        <div class="welcome" >
+            <div class="col-md-4 col-md wow bounceIn" data-wow-duration=".8s" data-wow-delay=".4s">
+                <h2>{{ welcome.titulo }}</h2>
+                <p>{{ welcome.descripcion }}</p>
+            </div>
+            <div class="col-md-8 wow fadeInRight" data-wow-duration=".8s" data-wow-delay=".4s">
+                <div class="col2">
+                    <div class="col-md-6 col1">
+                        <figure class="effect-bubba">
+                            <img class="img-responsive" src="{{ welcome.download_imagen1 }}" alt=""/>
+                            <figcaption>
+                                <h4>{{ welcome.tituloimagen1 }}</h4>
+                                <p>{{ welcome.descripcionimagen1 }}</p>
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-md-6 col1 wow fadeInRight" data-wow-duration=".8s" data-wow-delay=".4s">
+                        <figure class="effect-bubba">
+                            <img class="img-responsive" src="{{ welcome.download_imagen2 }}" alt=""/>
+                            <figcaption>
+                                <h4>{{ welcome.tituloimagen2 }}</h4>
+                                <p>{{ welcome.descripcionimagen2 }}</p>
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="clearfix"> </div>
+                </div>
+                <div class="col2">
+                    <div class="col-md-6 col1 wow fadeInUp" data-wow-duration=".8s" data-wow-delay=".4s">
+                        <figure class="effect-bubba">
+                            <img class="img-responsive" src="{{ welcome.download_imagen3 }}" alt=""/>
+                            <figcaption>
+                                <h4>{{ welcome.tituloimagen3 }}</h4>
+                                <p>{{ welcome.descripcionimagen3 }}</p>
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-md-6 col1 wow fadeInUp" data-wow-duration=".8s" data-wow-delay=".4s">
+                        <figure class="effect-bubba">
+                            <img class="img-responsive" src="{{ welcome.download_imagen4 }}" alt=""/>
+                            <figcaption>
+                                <h4>{{ welcome.tituloimagen4 }}</h4>
+                                <p>{{ welcome.descripcionimagen4 }}</p>
+                            </figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"> </div>
+        </div>
+
+        <!--events-->
+        <div class="content-middle" id="about">
+            <br/>
+            <br/>
+            <div class="content-mid-top wow bounceIn" data-wow-duration=".8s" data-wow-delay=".2s"><h3> {{ about.titulo }}</h3></div>
+            <div class="news">
+                <div class="col-md-6 new-more-at">
+                    <div class="new-more-at1 wow fadeInLeft" data-wow-duration=".8s" data-wow-delay=".4s">
+                        <div class="col-md-3 about">
+                            <img class="img-responsive" src="{{ about.download_imagen1 }}" alt="">
+                        </div>
+                        <div class="col-md-9 about1">
+                            <h5 style="text-align: center">{{ about.tituloimagen1 }}</h5>
+                            <p>{{ about.descripcionimagen1 }}</p>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                </div>
+                <div class="col-md-6 new-more-at">
+                    <div class="new-more-at1 wow fadeInRight" data-wow-duration=".8s" data-wow-delay=".4s">
+                        <div class="col-md-3 about">
+                            <img class="img-responsive" src="{{ about.download_imagen2 }}" alt="">
+                        </div>
+                        <div class="col-md-9 about1">
+                            <h5 style="text-align: center">{{ about.tituloimagen2 }}</h5>
+                            <p>{{ about.descripcionimagen2 }}</p>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                </div>
+                <div class="clearfix"> </div>
+            </div>
+            <div class="news">
+                <div class="col-md-6 new-more-at">
+                    <div class="new-more-at1 wow fadeInLeft" data-wow-duration=".8s" data-wow-delay=".4s">>
+                        <div class="col-md-3 about">
+                            <img class="img-responsive" src="{{ about.download_imagen3 }}" alt="">
+                        </div>
+                        <div class="col-md-9 about1">
+                            <h5 style="text-align: center">{{ about.tituloimagen3 }}</h5>
+                            <p>{{ about.descripcionimagen3 }}</p>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                </div>
+                <div class="col-md-6 new-more-at">
+                    <div class="new-more-at1 wow fadeInRight" data-wow-duration=".8s" data-wow-delay=".4s">>
+                        <div class="col-md-3 about">
+                            <img class="img-responsive" src="{{ about.download_imagen4 }}" alt="">
+                        </div>
+                        <div class="col-md-9 about1">
+                            <h5 style="text-align: center">{{ about.tituloimagen4 }}</h5>
+                            <p>{{ about.descripcionimagen4 }}</p>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                </div>
+                <div class="clearfix"> </div>
+            </div>
+        </div>
+        <br/>
+
+        {% if datosempresa.seccion_testimonial %}
+            <div class="test wow bounceInLeft" data-wow-duration=".8s" data-wow-delay=".4s">
+                <br/>
+                <br/>
+                <h3>{{ testimonial.titulo }}</h3>
+                <div class="col-md-5 test1 wow fadeInRight" data-wow-duration=".8s" data-wow-delay=".4s">
+                    <img class="img-responsive" src="{{ testimonial.download_imagen_testigo }}" alt="">
+                </div>
+                <div class="col-md-7 test2 wow fadeInUp" data-wow-duration=".8s" data-wow-delay=".4s">
+                    <h5>{{ testimonial.testigo }}</h5>
+                    <p style="font-size: 1em; text-align: justify">{{ testimonial.testimonio }} </p>
+                </div>
+                <div class="clearfix"> </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="newsletter">
+        <div class="container">
+            <div class="newsletter-main">
+                <h3>{{ newsletter.titulo }}</h3>
+                <p>{{ newsletter.descripcion }}</p>
+                <div id="success-subscribe" class="alert alert-success invisible">
+                    Te has suscrito con &eacute;xito a nuestra base de datos. <strong>Gracias!</strong>
+                </div>
+                <div id="error-subscribe-email" class="alert alert-danger invisible">
+                    Campo email no v&aacute;lido.
+                </div>
+                <div id="info-subscribe" class="alert alert-info invisible">
+                    Usted ya se encuentra suscrito(a) en nuestra base de datos. <strong>Gracias!</strong>
+                </div>
+                <div id="error-subscribe" class="alert alert-danger invisible">
+                    Hubo un error de comunicaci&oacute;n con el servidor. Intente mas tarde. <strong>Gracias!</strong>
+                </div>
+                <form autocomplete="off">
+                    <input type="hidden" id="csrfmiddlewaretoken_suscripciones" name="csrfmiddlewaretoken_suscripciones" value="{{ csrf_token }}">
+                    <input type="text" name='email' id="nlmail" placeholder="Email Address" onfocus="this.value = '';" onblur="if (this.value == '') {this.placeholder = 'Email Address';}">
+                    <a id="subscribe" class="btn"><i class="fa fa-database"></i> SUSCRIBIRSE</a>
+                </form>
+                <div class="clearfix"> </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid">
+        <div class="container">
+            <div class="col-md-6 grid-left wow fadeInRight" data-wow-duration=".8s" data-wow-delay=".4s">
+                <div class="col-md-6 grid1">
+                    <img class="img-responsive" src="{{ newsletter.download_imagen1 }}" alt="">
+                </div>
+                <div class="col-md-6 grid2">
+                    <div class="grid3">
+                        <h4>{{ newsletter.tituloimagen1 }}</h4>
+                        <p>{{ newsletter.descripcionimagen1 }}</p>
+                    </div>
+                </div>
+                <div class="clearfix"> </div>
+            </div>
+            <div class="col-md-6 grid-left wow fadeInRight" data-wow-duration=".8s" data-wow-delay=".4s">
+                <div class="col-md-6 grid1">
+                    <img class="img-responsive" src="{{ newsletter.download_imagen2 }}" alt="">
+                </div>
+                <div class="col-md-6 grid2">
+                    <div class="grid3">
+                        <h4>{{ newsletter.tituloimagen2 }}</h4>
+                        <p>{{ newsletter.descripcionimagen2 }}</p>
+                    </div>
+                </div>
+                <div class="clearfix"> </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="popular" id="services">
+        <h3>{{ popular.titulo }}</h3>
+        <div class="container">
+            <div class="col-md-4 popular-grid wow fadeInLeft" data-wow-duration=".8s" data-wow-delay=".4s">
+                <h4><a href="#">{{ popular.subtitulo1 }}</a></h4>
+                <ul>
+                    {% for d in popular_descripcion1 %}
+                        <li style="font-size: 1em; text-align: justify">{{ d }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-md-4 popular-grid wow fadeInUp" data-wow-duration=".8s" data-wow-delay="0.4s">
+                <h4><a href="#">{{ popular.subtitulo2 }}</a></h4>
+                <ul>
+                    {% for d in popular_descripcion2 %}
+                        <li style="font-size: 1em; text-align: justify">{{ d }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-md-4 popular-grid wow fadeInRight" data-wow-duration=".8s" data-wow-delay=".4s">
+                <h4><a href="#">{{ popular.subtitulo3 }}</a></h4>
+                <ul>
+                    {% for d in popular_descripcion3 %}
+                        <li style="font-size: 1em; text-align: justify">{{ d }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="clearfix"> </div>
+        </div>
+    </div>
+
+    <div class="content-bottom">
+        <div class="container">
+            <div class="content-bottom-top">
+                <div class="col-md-6 content-bottom-top1 wow bounceIn" data-wow-duration=".8s" data-wow-delay=".4s">
+                    <h3>{{ popular.tituloimagen }}</h3>
+                    <ul>
+                        {% for d in popular_descripcionimagen %}
+                            <li style="font-size: 1em; text-align: justify">{{ d }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="col-md-6 bottom-co1 wow fadeInRight" data-wow-duration=".8s" data-wow-delay=".4s">
+                    <img class="img-responsive" src="{{ popular.download_imagen }}" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="gallery" id="gallery">
+        <div class="gallery-top">
+            <div class="team-top wow bounceIn" data-wow-duration=".8s" data-wow-delay=".4s">
+                <h3>{{ gallery.titulo }}</h3>
+            </div>
+            <br/>
+            <div class="col-md-4 col1 gallery-grid wow fadeInLeft animated animated animated" data-wow-delay="0.2s" style="visibility: visible; animation-delay: 0.2s; animation-name: fadeInLeft;">
+                <a href="{{ gallery.download_imagen1 }}" rel="title" class="b-link-stripe b-animate-go  thickbox">
+                    <figure class="effect-bubba">
+                        <img class="img-responsive" src="{{ gallery.download_imagen1 }}" alt=""/>
+                        <figcaption>
+                            <h4 class="gal">{{ gallery.tituloimagen1 }}</h4>
+                            <p class="gal1">{{ gallery.descripcionimagen1 }}</p>
+                        </figcaption>
+                    </figure>
+                </a>
+            </div>
+            <div class="col-md-4 col1 gallery-grid wow fadeInLeft animated animated animated" data-wow-delay="0.3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInLeft;">
+                <a href="{{ gallery.download_imagen2 }}" rel="title" class="b-link-stripe b-animate-go  thickbox">
+                    <figure class="effect-bubba">
+                        <img class="img-responsive" src="{{ gallery.download_imagen2 }}" alt=""/>
+                        <figcaption>
+                            <h4 class="gal">{{ gallery.tituloimagen2 }}</h4>
+                            <p class="gal1">{{ gallery.descripcionimagen2 }}</p>
+                        </figcaption>
+                    </figure>
+                </a>
+            </div>
+            <div class="col-md-4 col1 gallery-grid wow fadeInLeft animated animated animated" data-wow-delay="0.4s" style="visibility: visible; animation-delay: 0.4s; animation-name: fadeInLeft;">
+                <a href="{{ gallery.download_imagen3 }}" rel="title" class="b-link-stripe b-animate-go  thickbox">
+                    <figure class="effect-bubba">
+                        <img class="img-responsive" src="{{ gallery.download_imagen3 }}" alt=""/>
+                        <figcaption>
+                            <h4 class="gal">{{ gallery.tituloimagen3 }}</h4>
+                            <p class="gal1">{{ gallery.descripcionimagen3 }}</p>
+                        </figcaption>
+                    </figure>
+                </a>
+            </div>
+            <div class="clearfix"> </div>
+        </div>
+
+        <div class="gallery-top">
+            <div class="col-md-4 col1 gallery-grid wow fadeInRight animated animated animated" data-wow-delay="0.5s" style="visibility: visible; animation-delay: 0.5s; animation-name: fadeInRight;">
+                <a href="{{ gallery.download_imagen4 }}" rel="title" class="b-link-stripe b-animate-go  thickbox">
+                    <figure class="effect-bubba">
+                        <img class="img-responsive" src="{{ gallery.download_imagen4 }}" alt=""/>
+                        <figcaption>
+                            <h4 class="gal">{{ gallery.tituloimagen4 }}</h4>
+                            <p class="gal1">{{ gallery.descripcionimagen4 }}</p>
+                        </figcaption>
+                    </figure>
+                </a>
+            </div>
+            <div class="col-md-4 col1 gallery-grid wow fadeInRight animated animated animated" data-wow-delay="0.6s" style="visibility: visible; animation-delay: 0.6s; animation-name: fadeInRight;">
+                <a href="{{ gallery.download_imagen5 }}" rel="title" class="b-link-stripe b-animate-go  thickbox">
+                    <figure class="effect-bubba">
+                        <img class="img-responsive" src="{{ gallery.download_imagen5 }}" alt=""/>
+                        <figcaption>
+                            <h4 class="gal">{{ gallery.tituloimagen5 }}</h4>
+                            <p class="gal1">{{ gallery.descripcionimagen5 }}</p>
+                        </figcaption>
+                    </figure>
+                </a>
+            </div>
+            <div class="col-md-4 col1 gallery-grid wow fadeInRight animated animated animated" data-wow-delay="0.7s" style="visibility: visible; animation-delay: 0.7s; animation-name: fadeInRight;">
+                <a href="{{ gallery.download_imagen6 }}" rel="title" class="b-link-stripe b-animate-go  thickbox">
+                    <figure class="effect-bubba">
+                        <img class="img-responsive" src="{{ gallery.download_imagen6 }}" alt=""/>
+                        <figcaption>
+                            <h4 class="gal">{{ gallery.tituloimagen6 }}</h4>
+                            <p class="gal1">{{ gallery.descripcionimagen6 }}</p>
+                        </figcaption>
+                    </figure>
+                </a>
+            </div>
+            <div class="clearfix"> </div>
+        </div>
+
+    </div>
+
+    <!--team-->
+    {% if datosempresa.seccion_team %}
+        <div class="team" id="team">
+            <div class="container">
+                <div class="team-main">
+                    <div class="team-top wow bounceIn" data-wow-duration=".8s" data-wow-delay=".4s">
+                        <h3>{{ team.titulo }}</h3>
+                    </div>
+                    <ul class="ch-grid">
+                        <li>
+                            <a href="#">
+                                <div class="ch-item wow fadeInLeft" data-wow-duration=".5s" data-wow-delay=".4s" style="background-image: url({{ team.download_imagen1 }});">
+                                    <div class="ch-info">
+                                        <h3>{{ team.tituloimagen1 }}</h3>
+                                        <p>{{ team.descripcionimagen1 }}</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <div class="ch-item wow fadeInLeft" data-wow-duration=".5s" data-wow-delay=".3s" style="background-image: url({{ team.download_imagen2 }});">
+                                    <div class="ch-info">
+                                        <h3>{{ team.tituloimagen2 }}</h3>
+                                        <p>{{ team.descripcionimagen2 }}</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <div class="ch-item wow fadeInRight" data-wow-duration=".5s" data-wow-delay=".2s" style="background-image: url({{ team.download_imagen3 }});">
+                                    <div class="ch-info">
+                                        <h3>{{ team.tituloimagen3 }}</h3>
+                                        <p>{{ team.descripcionimagen3 }}</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <div class="ch-item wow fadeInRight" data-wow-duration=".5s" data-wow-delay=".1s" style="background-image: url({{ team.download_imagen4 }});">
+                                    <div class="ch-info">
+                                        <h3>{{ team.tituloimagen4 }}</h3>
+                                        <p>{{ team.descripcionimagen4 }}</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="clearfix"> </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <br/><br/>
+    {% endif %}
+    <!--//team-->
+
+    <div id="review" class="reviews">
+        <div class="container">
+            <div class="sub-head">
+                <h2 class="title review wow bounceIn"  data-wow-duration=".8s" data-wow-delay=".2s">Tips</h2>
+            </div>
+            <div class="test-monials">
+                <!--//screen-gallery-->
+                <div class="sreen-gallery-cursual">
+                    <div id="owl-demo" class="owl-carousel">
+                        {% for review in reviews %}
+                            <div class="item-owl">
+                                <div class="test-review">
+                                    <p class="wow fadeInUp myblockquote" data-wow-duration=".8s" data-wow-delay=".4s">
+                                        {{ review.review }}
+                                    </p>
+                                    <img src="{{ review.download_foto }}" class="img-responsive" alt=""/>
+                                    <h5 class="wow bounceIn" data-wow-duration=".8s" data-wow-delay=".2s">{{ review.persona }}</h5>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <!--//screen-gallery-->
+                </div>
+            </div>
+            <div class="clearfix"> </div>
+        </div>
+    </div>
+    <!--//reviews-->
+
+    <div class="contact" id="contact" style="padding-top: 3em">
+        <div class="team-top wow bounceIn" data-wow-duration=".8s" data-wow-delay=".4s">
+            <h3>MAPS</h3>
+            <div style="text-align: center; padding-bottom: 0.5em">
+                <a href="#" mid="1" class="btn btn-info active mapas"><i class="fa fa-map-marker"></i> Location </a>
+                <a href="#" mid="2" class="btn btn-info mapas" style="margin-left: 0.5em"><i class="fa fa-map-pin"></i> StreetView</a>
+            </div>
+        </div>
+
+        <!--map-->
+        <div class="map" id="mapa1">
+            <iframe src="https://www.google.com/maps/embed/v1/place?q=place_id:ChIJs0z08r1tLZARYCWLzo8DixQ&key=AIzaSyBa7fjXP2SNP_QNsfT-daaICLwRUSOJWpg" allowfullscreen></iframe>
+        </div>
+
+        <div class="map" id="mapa2" style="display: none">
+            <iframe src="https://www.google.com/maps/embed/v1/streetview?key=AIzaSyBa7fjXP2SNP_QNsfT-daaICLwRUSOJWpg&location={{ datosempresa.latitud }},{{ datosempresa.longitud }}&heading=210&pitch=10&fov=35" allowfullscreen></iframe>
+        </div>
+        <!--//map-->
+
+        <div><br/></div>
+        <div class="container">
+            <div class="contact-box">
+                <div class="col-md-6 contact-info wow fadeInUp" data-wow-duration=".8s" data-wow-delay=".4s">
+                    <h3>Informaci&oacute;n de contacto</h3>
+                    <p style="font-size:1em; text-align: justify">
+                        Estamos ubicados en la calle Francisco de Orellana,
+                        en  el Centro Comercial Plaza Orellana,
+                        un exclusivo lugar que cuenta con amplia zona de parqueos,
+                        seguridad las 24 horas del d&iacute;a,
+                        en plena zona de negocios y bancaria,
+                        con cercan&iacute;a a los principales  hoteles y aeropuerto.
+                    </p>
+                    <ul>
+                        <li style="font-size:1em">
+                            <i class="fa fa-phone"></i> Tel&eacute;fono: 04-263-4157
+                        </li>
+                        <li style="font-size:1em">
+                            <i class="fa fa-send"></i> Email: servicioalcliente@enlivenec.com
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-md-6 contact-form wow fadeInUp" data-wow-duration=".8s" data-wow-delay=".4s">
+                    <form>
+                        <div class="col-md-6 your-name">
+                            <span>NAME:</span>
+                            <input type="text" id="contact-name" name="name" placeholder=" ">
+                            <div class="contact-error left-align" id="err-name">Ingrese su nombre</div>
+                        </div>
+                        <div class="col-md-6 your-name">
+                            <span>EMAIL:</span>
+                            <input type="text" id="contact-email" name="email" placeholder=" ">
+                            <div class="contact-error left-align" id="err-email">Ingrese una email v&aacute;lido.</div>
+                        </div>
+                        <div class="clearfix"> </div>
+                        <div class="your-msg">
+                            <span>MESSAGE:</span>
+                            <textarea cols="70" rows="5" name="contact-comment" id="contact-comment" placeholder=" "> </textarea>
+                            <div class="contact-error left-align" id="err-comment">Ingrese un mensaje o comentario.</div>
+                        </div>
+                        <div class="your-submit">
+                            <a id="contact-send" class="btn btn-info"><i class="fa fa-send"></i> Enviar</a>
+                            <span id="successSend" class="alert alert-success invisible" style="float: right">
+                                Su mensaje ha sido enviado con &eacute;xito. <strong>Gracias!</strong>
+                            </span>
+                            <span id="errorSend" class="alert alert-danger invisible" style="float: right">
+                                Ha ocurrido un error en el env&iacute;o. Intente mas tarde.
+                            </span>
+                        </div>
+                    </form>
+                </div>
+                <div class="clearfix"> </div>
+            </div>
+
+        </div>
+    </div>
+    <!--//content-->
+
+
+</div>
+
+<!--footer-->
+<div class="footer">
+    <div class="container">
+        <div class="footer-top">
+            <a href="#"><i></i></a>
+            <p class="footer-in">
+                Si quieres ser parte del equipo de Enliven Salon & Spa,
+                puedes enviar tu hoja de vida al email amguerra@enlivenec.com</p>
+            <p class="footer-class"> © 2016 Enliven. All Rights Reserved </p>
+        </div>
+        <a href="#" id="toTop" style="display: block;"> <span id="toTopHover" style="opacity: 1;"> </span></a>
+    </div>
+</div>
+<!-- animation-effect -->
+<link href="/static/css/animate.min.css" rel="stylesheet" type="text/css" media="all" />
+<script src="/static/js/wow.min.js"></script>
+<script>
+    new WOW().init();
+</script>
+<!-- //animation-effect -->
+</body>
+</html>

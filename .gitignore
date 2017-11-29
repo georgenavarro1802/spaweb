@@ -1,0 +1,17 @@
+.idea/
+.idea/*
+spaweb/settings.py
+/spaweb/settings.py
+web/migrations/00*
+**/__pycache__/
+media/
+media/*
+static/admin/
+spaweb/.settings.py.swp
+*.swp
+spaweb/__init__.pyc
+spaweb/settings.pyc
+
+# MacOS
+*.DS_Store
+tests/*
